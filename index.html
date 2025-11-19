@@ -336,23 +336,24 @@ function animateEmoji(to) {
 }
 
 function load() {
-  const curr = quiz[i];
-  qBox.textContent = curr.q;
-  opBox.innerHTML = "";
-  nextBtn.style.display = "none";
-  curr.options.forEach(o => {
-    const b = document.createElement("button");
-    b.textContent = o.text;
-    b.onclick = () => {
-      Array.from(opBox.children).forEach(btn => btn.classList.remove('selected'));
-      b.classList.add('selected');
-      chosenEmotion = o.emotion;
-      chosenResults[i] = o.text
-      animateEmoji(o.emotion);
-      nextBtn.style.display = "block";
-    };
-    opBox.appendChild(b);
-  });
+const curr = quiz[i];
+  qBox.textContent = curr.q;
+  opBox.innerHTML = "";
+  nextBtn.style.display = "none";
+  curr.options.forEach(o => {
+    const b = document.createElement("button");
+    b.textContent = o.text;
+    b.onclick = () => {
+      Array.from(opBox.children).forEach(btn => btn.classList.remove('selected'));
+      b.classList.add('selected');
+      chosenEmotion = o.emotion;
+      chosenResults[i] = o.text
+      animateEmoji(o.emotion);
+     //nextBtn.style.display = "block";
+     setTimeout(() => next(), 50); 
+    };
+    opBox.appendChild(b);
+  });
 }
 
 nextBtn.onclick = () => next();

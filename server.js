@@ -59,6 +59,16 @@ app.get('/results', async (req, res) => {
   }
 });
 
+app.delete('/resultsdel', async (req, res) => {
+  try {
+    await pool.query('TRUNCATE TABLE results');
+    res.json({ success: true, message: 'All results deleted (table truncated)' });
+  } catch (err) {
+    console.error('Error truncating results table:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Backend running on port ${PORT}`);
