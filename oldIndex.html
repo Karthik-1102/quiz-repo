@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>For You ❤️</title>
+<style>
+  body {
+    font-family: 'Playfair Display', serif;
+    background: #f5f2fb;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* vertical centering */
+    min-height: 100vh; /* full height */
+  }
+
+  .card {
+    background: white;
+    width: 95%;
+    max-width: 420px;
+    border-radius: 22px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .emoji {
+    font-size: 80px;
+    margin-bottom: 20px;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+  }
+
+  .question {
+    font-size: 20px;
+    text-align: center;
+    color: #4a4568;
+    margin-bottom: 20px;
+  }
+
+  .options {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  button {
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: #d7c9ff;
+    font-size: 16px;
+    color: #3a3458;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s;
+  }
+
+  button:hover {
+    transform: scale(1.03);
+    background: #c7b8ff;
+  }
+
+  #nextBtn {
+    margin-top: 10px;
+    display: none;
+  }
+
+  .fade {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  .morphing {
+    animation: emoji-morph 0.4s ease forwards;
+  }
+
+  @keyframes emoji-morph {
+    0% { transform: rotate(0deg) scale(1); }
+    20% { transform: rotate(-4deg) scaleX(0.92) scaleY(1.05); }
+    50% { transform: rotate(4deg) scaleX(1.05) scaleY(0.95); }
+    100% { transform: rotate(0deg) scale(1); }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div id="emoji" class="emoji">😐</div>
+  <div id="question" class="question">Loading...</div>
+  <div id="options" class="options"></div>
+  <button id="nextBtn">Next →</button>
+</div>
+
+<script>
+const neutral = "😐";
+const emotions = {
+  happy: "😊",
+  blush: "🥺",
+  laugh: "😄",
+  shy: "☺️",
+  love: "😍",
+  wow: "😳",
+};
+
+const quiz = [
+  {
+    q: "Be honest… do you like surprises or pretend you don't?",
+    options: [
+      { text: "Love them", emotion: "happy" },
+      { text: "Depends on mood", emotion: "blush" },
+      { text: "Absolutely not", emotion: "wow" }
+    ]
+  },
+  {
+    q: "If I showed up with food randomly… your reaction?",
+    options: [
+      { text: "Instant happiness", emotion: "love" },
+      { text: "Feed me pls", emotion: "laugh" },
+      { text: "Depends what food", emotion: "shy" }
+    ]
+  },
+  {
+    q: "Would you rather…",
+    options: [
+      { text: "A long walk with me", emotion: "happy" },
+      { text: "A chill movie night", emotion: "blush" },
+      { text: "Food + silence", emotion: "laugh" }
+    ]
+  }
+];
+
+let i = 0;
+let chosenEmotion = null;
+
+const qBox = document.getElementById("question");
+const opBox = document.getElementById("options");
+const emojiBox = document.getElementById("emoji");
+const nextBtn = document.getElementById("nextBtn");
+
+function animateEmoji(to) {
+  emojiBox.classList.add("morphing");
+
+  setTimeout(() => {
+    emojiBox.textContent = emotions[to];
+  }, 120);
+
+  setTimeout(() => {
+    emojiBox.classList.remove("morphing");
+  }, 400);
+}
+
+function load() {
+  const curr = quiz[i];
+  qBox.textContent = curr.q;
+  opBox.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  curr.options.forEach(o => {
+    const b = document.createElement("button");
+    b.textContent = o.text;
+    b.onclick = () => {
+      chosenEmotion = o.emotion;
+      animateEmoji(o.emotion);
+      nextBtn.style.display = "block";
+    };
+    opBox.appendChild(b);
+  });
+}
+
+nextBtn.onclick = () => next();
+
+function next() {
+  qBox.classList.add("fade");
+  opBox.classList.add("fade");
+
+  setTimeout(() => {
+    i++;
+    if (i < quiz.length) {
+      qBox.classList.remove("fade");
+      opBox.classList.remove("fade");
+      load();
+    } else {
+      finish();
+    }
+  }, 450);
+}
+
+function finish() {
+  qBox.textContent = "Okay… final question. Will you go on a small date with me soon?";
+  opBox.innerHTML = "";
+
+  const yes = document.createElement("button");
+  yes.textContent = "Yes";
+  yes.onclick = () => animateEmoji("love");
+
+  const maybe = document.createElement("button");
+  maybe.textContent = "Maybe";
+  maybe.onclick = () => animateEmoji("shy");
+
+  opBox.appendChild(yes);
+  opBox.appendChild(maybe);
+
+  /* Drop emoji to the center */
+  emojiBox.style.transition = "transform 0.8s ease";
+  emojiBox.style.transform = "translateY(40vh)";
+}
+
+load();
+</script>
+</body>
+</html>

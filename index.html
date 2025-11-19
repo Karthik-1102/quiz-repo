@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>For You ❤️</title>
+<style>
+  body {
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(120deg,#f9ede2 0%, #f5f2ea 100%);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    transition: background 0.4s;
+  }
+
+  .bg-pattern {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.09;
+    background-image: url("https://www.transparenttextures.com/patterns/wood-pattern.png");
+    background-repeat: repeat;
+    background-size: auto;
+  }
+
+  .card {
+    background: linear-gradient(100deg, #fbf7ef 80%, #f7ecd6 100%);
+    width: 95%;
+    max-width: 420px;
+    border-radius: 30px;
+    padding: 24px;
+    box-shadow: 0 8px 28px rgba(140,131,96,0.11), 0 1.5px 14px 1px #e4cea2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    border: 1px solid #eddec7;
+  }
+
+  #startScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+    width: 100%;
+  }
+  .circle-frame {
+    width: 128px;
+    height: 128px;
+    background: linear-gradient(120deg,#f1dec8 40%, #ecdab3 100%);
+    border-radius: 50%;
+    border: 3px solid #fbf7ef;
+    box-shadow: 0 2px 15px #e4cea277;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  .wave-person {
+    width: 100px;
+    height: 100px;
+    border-radius: 20px;
+    object-fit: cover;
+    background: #f6eeea;
+  }
+  .greeting {
+    font-size: 28px;
+    color: #a0743a;
+    margin-top: 8px;
+    font-weight: 700;
+    letter-spacing: .7px;
+  }
+  .subtext {
+    font-size: 18px;
+    color: #c89f6a;
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .start-btn {
+    padding: 15px 42px;
+    border-radius: 22px;
+    border: none;
+    background: linear-gradient(120deg, #eed6b2 0%, #f8e4c2 100%);
+    font-size: 18px;
+    color: #a0743a;
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: .4px;
+    box-shadow: 0 4px 16px #e4cea2a6;
+    transition: transform 0.2s, box-shadow 0.3s;
+    margin-top: 10px;
+  }
+  .start-btn:hover {
+    transform: scale(1.04);
+    box-shadow: 0 8px 24px #b39b67a1;
+    background: linear-gradient(120deg, #f6e7cb 0%, #e5d1b2 100%);
+    color: #7c5d33;
+  }
+
+  #quizScreen {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+  }
+  .emoji {
+    font-size: 80px;
+    margin-bottom: 20px;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+  }
+  .question {
+    font-size: 22px;
+    text-align: center;
+    color: #a0743a;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  .options {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  button:not(.start-btn) {
+    padding: 14px;
+    border-radius: 15px;
+    border: none;
+    background: linear-gradient(120deg,#e7dbc4 0%, #eed6b2 100%);
+    font-size: 17px;
+    color: #7c5d33;
+    cursor: pointer;
+    box-shadow: 0 1px 7px #decaa669;
+    font-weight: 500;
+    transition: transform 0.2s, background 0.3s;
+  }
+  button:not(.start-btn).selected {
+    transform: scale(1.05);
+    background: linear-gradient(120deg, #f5ddc1 0%, #ecd4ae 100%);
+}
+
+
+  button:not(.start-btn):hover {
+    transform: scale(1.05);
+    background: linear-gradient(120deg, #f5ddc1 0%, #ecd4ae 100%);
+  }
+  #nextBtn {
+    margin-top: 10px;
+    display: none;
+    background: linear-gradient(120deg,#ecd4ae 0%, #eed6b2 100%);
+    color: #a0743a;
+    font-weight: 700;
+  }
+  .fade { opacity: 0; transform: translateY(8px);}
+  .morphing { animation: emoji-morph 0.4s ease forwards;}
+  @keyframes emoji-morph {
+    0% { transform: rotate(0deg) scale(1);}
+    20% { transform: rotate(-4deg) scaleX(0.92) scaleY(1.05);}
+    50% { transform: rotate(4deg) scaleX(1.05) scaleY(0.95);}
+    100% { transform: rotate(0deg) scale(1);}
+  }
+  .slide-out { animation: slideOut 0.5s ease forwards;}
+  .slide-in { animation: slideIn 0.5s ease forwards;}
+  @keyframes slideOut {
+    from { opacity: 1; transform: translateX(0);}
+    to { opacity: 0; transform: translateX(-20px);}
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(20px);}
+    to { opacity: 1; transform: translateX(0);}
+  }
+</style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+<div class="card">
+  <!-- Starting Screen -->
+  <div id="startScreen">
+    <div class="circle-frame">
+      <img
+        src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExbngzemgxdmdmdjliOXNnd3l3aWp0YzVlenZyNGh1MWEwbnNjcWlteSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/dYx3YFq2OiVLIssQH9/giphy.gif"
+        class="wave-person"
+        alt="Waving person GIF"
+      />
+    </div>
+    <div class="greeting">Hi Akila!!</div>
+    <div class="subtext">Just checking in...</div>
+    <button class="start-btn" onclick="startQuiz()">Start</button>
+  </div>
+
+  <!-- Quiz Screen -->
+  <div id="quizScreen">
+    <div id="emoji" class="emoji">😐</div>
+    <div id="question" class="question">Loading...</div>
+    <div id="options" class="options"></div>
+    <button id="nextBtn">Next →</button>
+  </div>
+</div>
+
+<script>
+let chosenResults = [];
+const neutral = "😐";
+const emotions = {
+  happy: "😊",
+  blush: "🥺",
+  laugh: "😄",
+  shy: "☺️",
+  love: "😍",
+  wow: "😳",
+  angry: "😠",   // new
+  confused: "😕", // new
+  relaxed: "😌"  // new
+};
+
+const quiz = [
+  {
+    q: "What is your mood right now?",
+    options: [
+      { text: "🌧️ meh", emotion: "shy" },
+      { text: "🔥 annoyed ", emotion: "angry" },
+      { text: "🐼 A sleepy panda", emotion: "relaxed" },
+      { text: "☕ functioning ", emotion: "happy" },
+      { text: "🤔 Not sure...", emotion: "confused" }
+    ]
+  },
+  {
+    q: "How mad are you at Karthik?",
+    options: [
+      { text: "😇 Not mad, just quiet", emotion: "relaxed" },
+      { text: "🙄 Mildly done with your nonsense", emotion: "blush" },
+      { text: "😤 Annoyed", emotion: "wow" },
+      { text: "🔥 Big mad ", emotion: "angry" },
+      { text: "🫠 I don’t even know bro", emotion: "confused" }
+    ]
+  },
+  {
+    q: "When can Karthik bother you next?",
+    options: [
+      { text: "⏳ Tomorrow", emotion: "relaxed" },
+      { text: "⏱️ This Weekend", emotion: "blush" },
+      { text: "🗓️ Next Weekend", emotion: "shy" },
+      { text: "👀 Next year", emotion: "confused" },
+      { text: "🤫 Not now", emotion: "confused" }
+    ]
+  },{
+    q: "Preferred mode of communication",
+    options: [
+      { text: "📞 Call", emotion: "happy" },
+      { text: "🎧 Voice note", emotion: "blush" },
+      { text: "⌨️ Text", emotion: "shy" },
+      { text: "🧘 Silence but shared oxygen", emotion: "relaxed" },
+      { text: "🐒 Meme exchange", emotion: "laugh" }
+    ]
+  }
+];
+
+
+let i = 0;
+let chosenEmotion = null;
+
+const qBox = document.getElementById("question");
+const opBox = document.getElementById("options");
+const emojiBox = document.getElementById("emoji");
+const nextBtn = document.getElementById("nextBtn");
+const startScreen = document.getElementById("startScreen");
+const quizScreen = document.getElementById("quizScreen");
+
+function startQuiz() {
+  startScreen.classList.add("slide-out");
+  setTimeout(() => {
+    startScreen.style.display = "none";
+    quizScreen.style.display = "flex";
+    quizScreen.classList.add("slide-in");
+    load();
+  }, 500);
+}
+
+function animateEmoji(to) {
+  emojiBox.classList.add("morphing");
+  setTimeout(() => {
+    emojiBox.textContent = emotions[to];
+  }, 120);
+  setTimeout(() => {
+    emojiBox.classList.remove("morphing");
+  }, 400);
+}
+
+function load() {
+  const curr = quiz[i];
+  qBox.textContent = curr.q;
+  opBox.innerHTML = "";
+  nextBtn.style.display = "none";
+  curr.options.forEach(o => {
+    const b = document.createElement("button");
+    b.textContent = o.text;
+    b.onclick = () => {
+      Array.from(opBox.children).forEach(btn => btn.classList.remove('selected'));
+      b.classList.add('selected');
+      chosenEmotion = o.emotion;
+      chosenResults[i] = o.text
+      animateEmoji(o.emotion);
+      nextBtn.style.display = "block";
+    };
+    opBox.appendChild(b);
+  });
+}
+
+nextBtn.onclick = () => next();
+
+function next() {
+  qBox.classList.add("fade");
+  opBox.classList.add("fade");
+  setTimeout(() => {
+    i++;
+    if (i < quiz.length) {
+      qBox.classList.remove("fade");
+      opBox.classList.remove("fade");
+      load();
+    } else {
+      finish();
+    }
+  }, 450);
+}
+
+// function finish() {
+//   qBox.textContent = "Okay… final question. Will you go on a small date with me soon?";
+//   opBox.innerHTML = "";
+//   const yes = document.createElement("button");
+//   yes.textContent = "Yes";
+//   yes.onclick = () => animateEmoji("love");
+//   const maybe = document.createElement("button");
+//   maybe.textContent = "Maybe";
+//   maybe.onclick = () => animateEmoji("shy");
+//   opBox.appendChild(yes);
+//   opBox.appendChild(maybe);
+//   nextBtn.style.display = "none";
+// }
+
+
+
+function finish() {
+  // Gather the selected answers
+  const results = [];
+  for (let idx = 0; idx < quiz.length; idx++) {
+    const q = quiz[idx].q;
+    const a = chosenResults[idx] || null; // Store the selected emotion or null
+    results.push({ q, a });
+  }
+  // Post results to backend
+  fetch('http://localhost:3001/results', {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ answers: results })
+  })
+    .then(res => res.json())
+    .then(data => {
+      qBox.textContent = "Results saved! Thank you.";
+      opBox.innerHTML = "";
+      nextBtn.style.display = "none";
+    })
+    .catch(() => {
+      qBox.textContent = "There was a problem saving results.";
+      opBox.innerHTML = "";
+      nextBtn.style.display = "none";
+    });
+
+  // Show last question options (as before)
+  const yes = document.createElement("button");
+  yes.textContent = "Yes";
+  yes.onclick = () => animateEmoji("love");
+  const maybe = document.createElement("button");
+  maybe.textContent = "Maybe";
+  maybe.onclick = () => animateEmoji("shy");
+  opBox.appendChild(yes);
+  opBox.appendChild(maybe);
+}
+
+
+
+</script>
+</body>
+</html>
