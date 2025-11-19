@@ -219,44 +219,87 @@ const emotions = {
   relaxed: "😌"  // new
 };
 
+// const quiz = [
+//   {
+//     q: "What is your mood right now?",
+//     options: [
+//       { text: "🌧️ meh", emotion: "shy" },
+//       { text: "🔥 annoyed ", emotion: "angry" },
+//       { text: "🐼 A sleepy panda", emotion: "relaxed" },
+//       { text: "☕ functioning ", emotion: "happy" },
+//       { text: "🤔 Not sure...", emotion: "confused" }
+//     ]
+//   },
+//   {
+//     q: "How mad are you at Karthik?",
+//     options: [
+//       { text: "😇 Not mad, just quiet", emotion: "relaxed" },
+//       { text: "🙄 Mildly done with your nonsense", emotion: "blush" },
+//       { text: "😤 Annoyed", emotion: "wow" },
+//       { text: "🔥 Big mad ", emotion: "angry" },
+//       { text: "🫠 I don’t even know bro", emotion: "confused" }
+//     ]
+//   },
+//   {
+//     q: "When can Karthik bother you next?",
+//     options: [
+//       { text: "⏳ Tomorrow", emotion: "relaxed" },
+//       { text: "⏱️ This Weekend", emotion: "blush" },
+//       { text: "🗓️ Next Weekend", emotion: "shy" },
+//       { text: "👀 Next year", emotion: "confused" },
+//       { text: "🤫 Not now", emotion: "confused" }
+//     ]
+//   },{
+//     q: "Preferred mode of communication",
+//     options: [
+//       { text: "📞 Call", emotion: "happy" },
+//       { text: "🎧 Voice note", emotion: "blush" },
+//       { text: "⌨️ Text", emotion: "shy" },
+//       { text: "🧘 Silence but shared oxygen", emotion: "relaxed" },
+//       { text: "🐒 Meme exchange", emotion: "laugh" }
+//     ]
+//   }
+// ];
+
 const quiz = [
   {
     q: "What is your mood right now?",
     options: [
-      { text: "🌧️ meh", emotion: "shy" },
-      { text: "🔥 annoyed ", emotion: "angry" },
-      { text: "🐼 A sleepy panda", emotion: "relaxed" },
-      { text: "☕ functioning ", emotion: "happy" },
-      { text: "🤔 Not sure...", emotion: "confused" }
+      { text: "meh", emotion: "shy" },
+      { text: "annoyed", emotion: "angry" },
+      { text: "A sleepy panda", emotion: "relaxed" },
+      { text: "functioning", emotion: "happy" },
+      { text: "Not sure...", emotion: "confused" }
     ]
   },
   {
     q: "How mad are you at Karthik?",
     options: [
-      { text: "😇 Not mad, just quiet", emotion: "relaxed" },
-      { text: "🙄 Mildly done with your nonsense", emotion: "blush" },
-      { text: "😤 Annoyed", emotion: "wow" },
-      { text: "🔥 Big mad ", emotion: "angry" },
-      { text: "🫠 I don’t even know bro", emotion: "confused" }
+      { text: "Not mad, just quiet", emotion: "relaxed" },
+      { text: "Mildly done with your nonsense", emotion: "blush" },
+      { text: "Annoyed", emotion: "wow" },
+      { text: "Big mad", emotion: "angry" },
+      { text: "I don’t even know bro", emotion: "confused" }
     ]
   },
   {
     q: "When can Karthik bother you next?",
     options: [
-      { text: "⏳ Tomorrow", emotion: "relaxed" },
-      { text: "⏱️ This Weekend", emotion: "blush" },
-      { text: "🗓️ Next Weekend", emotion: "shy" },
-      { text: "👀 Next year", emotion: "confused" },
-      { text: "🤫 Not now", emotion: "confused" }
+      { text: "Tomorrow", emotion: "relaxed" },
+      { text: "This Weekend", emotion: "blush" },
+      { text: "Next Weekend", emotion: "shy" },
+      { text: "Next year", emotion: "confused" },
+      { text: "Not now", emotion: "confused" }
     ]
-  },{
+  },
+  {
     q: "Preferred mode of communication",
     options: [
-      { text: "📞 Call", emotion: "happy" },
-      { text: "🎧 Voice note", emotion: "blush" },
-      { text: "⌨️ Text", emotion: "shy" },
-      { text: "🧘 Silence but shared oxygen", emotion: "relaxed" },
-      { text: "🐒 Meme exchange", emotion: "laugh" }
+      { text: "Call", emotion: "happy" },
+      { text: "Voice note", emotion: "blush" },
+      { text: "Text", emotion: "shy" },
+      { text: "Silence but shared oxygen", emotion: "relaxed" },
+      { text: "Meme exchange", emotion: "laugh" }
     ]
   }
 ];
@@ -353,23 +396,43 @@ function finish() {
     const a = chosenResults[idx] || null; // Store the selected emotion or null
     results.push({ q, a });
   }
-  // Post results to backend
-  fetch('http://localhost:3001/results', {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ answers: results })
-  })
-    .then(res => res.json())
-    .then(data => {
-      qBox.textContent = "Results saved! Thank you.";
-      opBox.innerHTML = "";
-      nextBtn.style.display = "none";
-    })
-    .catch(() => {
-      qBox.textContent = "There was a problem saving results.";
-      opBox.innerHTML = "";
-      nextBtn.style.display = "none";
-    });
+
+
+// Before sending, verify results is an array of objects
+if (!Array.isArray(results) || results.length === 0) {
+  console.error('No results to send or results is not an array');
+  return;
+}
+
+console.log('Sending results:', results);
+
+fetch('http://localhost:3001/results', {
+// fetch('https://quiz-repo-8pp4.onrender.com/results', {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ answers: results }) 
+})
+.then(response => {
+  if (!response.ok) {
+    throw new Error(`Server error: ${response.statusText}`);
+  }
+  return response.json();
+})
+.then(data => {
+  console.log('Success:', data);
+  qBox.textContent = "Results saved! Thank you.";
+  opBox.innerHTML = "";
+  nextBtn.style.display = "none";
+})
+.catch(error => {
+  console.error('Fetch error:', error);
+  qBox.textContent = "There was a problem saving results.";
+  opBox.innerHTML = "";
+  nextBtn.style.display = "none";
+});
+
 
   // Show last question options (as before)
   const yes = document.createElement("button");

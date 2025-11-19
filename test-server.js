@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 
 // PostgreSQL pool connection
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: "postgresql://akila_app_user:GaG0ennCWzZfjv5Rj9oklHQfJqAflI1s@dpg-d4eqc0je5dus73fl5ju0-a.oregon-postgres.render.com/akila_app",
   ssl: {
     rejectUnauthorized: false,
   },
@@ -26,13 +26,34 @@ pool.query(`
 
 // Store quiz result
 app.post('/results', async (req, res) => {
-  const { answers } = req.body;
+  let { answers } = req.body;  // allow reassignment
   const timestamp = new Date().toISOString();
-  if (!answers || !Array.isArray(answers)) {
-    return res.status(400).json({ error: 'Invalid data' });
+
+  if (!answers) {
+    return res.status(400).json({ error: 'Invalid data: no answers' });
+  }
+
+  // Defensive check: if answers is a JSON string, parse it once
+  if (typeof answers === 'string') {
+    try {
+      answers = JSON.parse(answers);
+    } catch (parseError) {
+      console.error('JSON Parse error on answers:', parseError);
+      return res.status(400).json({ error: 'Malformed JSON in answers' });
+    }
+  }
+
+  if (!Array.isArray(answers)) {
+    return res.status(400).json({ error: 'Invalid data: answers not an array' });
   }
 
   try {
+    console.log('Parsed answers:', answers);
+    console.log("JSON:", JSON.stringify(answers))
+    // const result = await pool.query(
+    //   'INSERT INTO results (timestamp, answers) VALUES ($1, $2) RETURNING id',
+    //   [timestamp, answers]
+    // );
     const result = await pool.query(
   'INSERT INTO results (timestamp, answers) VALUES ($1, $2::jsonb) RETURNING id',
   [timestamp, JSON.stringify(answers)]
