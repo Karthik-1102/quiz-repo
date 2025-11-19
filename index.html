@@ -224,9 +224,9 @@ const quiz = [
     q: "What is your mood right now?",
     options: [
       { text: "🌧️ meh", emotion: "shy" },
-      { text: "🔥 annoyed ", emotion: "angry" },
       { text: "🐼 A sleepy panda", emotion: "relaxed" },
-      { text: "☕ functioning ", emotion: "happy" },
+      { text: "☕ functioning Human", emotion: "happy" },
+      { text: "😪 tired", emotion: "relaxed" },
       { text: "🤔 Not sure...", emotion: "confused" }
     ]
   },
@@ -235,7 +235,6 @@ const quiz = [
     options: [
       { text: "😇 Not mad, just quiet", emotion: "relaxed" },
       { text: "🙄 Mildly done with your nonsense", emotion: "blush" },
-      { text: "😤 Annoyed", emotion: "wow" },
       { text: "🔥 Big mad ", emotion: "angry" },
       { text: "🫠 I don’t even know bro", emotion: "confused" }
     ]
@@ -243,20 +242,19 @@ const quiz = [
   {
     q: "When can Karthik bother you next?",
     options: [
-      { text: "⏳ Tomorrow", emotion: "relaxed" },
-      { text: "⏱️ This Weekend", emotion: "blush" },
-      { text: "🗓️ Next Weekend", emotion: "shy" },
-      { text: "👀 Next year", emotion: "confused" },
+      { text: "⏳ This Weekend", emotion: "blush" },
+      { text: "⏱️ Next Weekend", emotion: "shy" },
+      { text: "🗓️ Next year", emotion: "confused" },
+      { text: "👀 When I poke you first", emotion: "relaxed" },
       { text: "🤫 Not now", emotion: "confused" }
     ]
   },{
     q: "Preferred mode of communication",
     options: [
       { text: "📞 Call", emotion: "happy" },
-      { text: "🎧 Voice note", emotion: "blush" },
       { text: "⌨️ Text", emotion: "shy" },
       { text: "🧘 Silence but shared oxygen", emotion: "relaxed" },
-      { text: "🐒 Meme exchange", emotion: "laugh" }
+      { text: "🐒 Reels", emotion: "laugh" }
     ]
   }
 ];
@@ -337,23 +335,23 @@ function animateEmoji(to) {
 
 function load() {
 const curr = quiz[i];
-  qBox.textContent = curr.q;
-  opBox.innerHTML = "";
-  nextBtn.style.display = "none";
-  curr.options.forEach(o => {
-    const b = document.createElement("button");
-    b.textContent = o.text;
-    b.onclick = () => {
-      Array.from(opBox.children).forEach(btn => btn.classList.remove('selected'));
-      b.classList.add('selected');
-      chosenEmotion = o.emotion;
-      chosenResults[i] = o.text
-      animateEmoji(o.emotion);
-     //nextBtn.style.display = "block";
-     setTimeout(() => next(), 50); 
-    };
-    opBox.appendChild(b);
-  });
+qBox.textContent = curr.q;
+opBox.innerHTML = "";
+nextBtn.style.display = "none";
+ curr.options.forEach(o => {
+const b = document.createElement("button");
+b.textContent = o.text;
+b.onclick = () => {
+Array.from(opBox.children).forEach(btn => btn.classList.remove('selected'));
+b.classList.add('selected');
+chosenEmotion = o.emotion;
+chosenResults[i] = o.text
+animateEmoji(o.emotion);
+//nextBtn.style.display = "block";
+setTimeout(() => next(), 50); 
+};
+opBox.appendChild(b);
+});
 }
 
 nextBtn.onclick = () => next();
